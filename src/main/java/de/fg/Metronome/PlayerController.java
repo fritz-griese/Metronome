@@ -1,4 +1,4 @@
-package de.fg;
+package de.fg.Metronome;
 
 /**
  * Controls the Audio-Thread.

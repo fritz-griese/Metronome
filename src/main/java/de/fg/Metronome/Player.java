@@ -1,4 +1,4 @@
-package de.fg;
+package de.fg.Metronome;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -19,7 +19,7 @@ public class Player extends Thread {
     private int tickLength = 4100;
     private boolean playing = true;
 
-    public Player() {
+    Player() {
         tickBufferSize = (int) ((60 / (double) bpm) * (double) sampleRate) * 4;
     }
 

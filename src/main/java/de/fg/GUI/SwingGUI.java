@@ -1,11 +1,13 @@
-package de.fg;
+package de.fg.GUI;
+
+import de.fg.Metronome.PlayerController;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class FxGUI implements ActionListener{
+public class SwingGUI implements ActionListener{
 
     private final PlayerController controller = new PlayerController();
 
@@ -15,7 +17,7 @@ public class FxGUI implements ActionListener{
     private  JButton buttonPlay;
 
     public static void main (String[] args) {
-        SwingUtilities.invokeLater(() -> new FxGUI().createAndShowGUI());
+        SwingUtilities.invokeLater(() -> new SwingGUI().createAndShowGUI());
     }
 
     public void createAndShowGUI() {
