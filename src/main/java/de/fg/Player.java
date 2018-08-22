@@ -1,9 +1,10 @@
 package de.fg;
 
-import javax.sound.sampled.*;
-import java.util.Arrays;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.SourceDataLine;
 
-public class Player {
+public class Player extends Thread {
 
     private int bpm = 80;
     private double frequencyOfTick = 500;
@@ -16,26 +17,38 @@ public class Player {
     private double[] tickBuffer;
     private SourceDataLine line = null;
     private int tickLength = 4100;
+    private boolean playing = true;
 
-    boolean playing = false;
-
-    public Player(){
-        tickBufferSize = (int)((60 / (double)bpm) * (double)sampleRate) * 4;
+    public Player() {
+        tickBufferSize = (int) ((60 / (double) bpm) * (double) sampleRate) * 4;
     }
 
-    public void play() {
-        if (!playing) {
-            playing = true;
-            createPlayer();
-            generateTick();
-            new Thread(play).start();
+    @Override
+    public void run() {
+        createPlayer();
+        generateTick();
+        buffer = new byte[bufferSize];
+        int b = 0;
+        int t = 0;
+
+        while (playing) {
+            if (t >= tickBufferSize)
+                t = 0;
+
+            short maxSample = (short) ((tickBuffer[t++] * Short.MAX_VALUE));
+            buffer[b++] = (byte) (maxSample & 0x00ff);
+            buffer[b++] = (byte) ((maxSample & 0xff00) >>> 8);
+
+            if (b >= bufferSize) {
+                line.write(buffer, 0, buffer.length);
+                b = 0;
+            }
         }
-        else {
-            playing = false;
-        }
+        destroyPlayer();
+        System.out.println("Audio Thread " + Thread.currentThread() + " has finished.");
     }
 
-    private void generateTick(){
+    private void generateTick() {
         tickBuffer = new double[tickBufferSize];
         int noTickLength = (tickBufferSize - (4 * tickLength)) / 4;
         int position = 0;
@@ -45,8 +58,7 @@ public class Player {
                 for (int sound = 0; sound < tickLength; sound++) {
                     tickBuffer[sound] = Math.sin(2 * Math.PI * sound / (sampleRate / frequencyOfFirstTick));
                 }
-            }
-            else {
+            } else {
                 for (int sound = position; sound < position + tickLength; sound++) {
                     tickBuffer[sound] = Math.sin(2 * Math.PI * sound / (sampleRate / frequencyOfTick));
                 }
@@ -68,40 +80,23 @@ public class Player {
             tickBuffer[i] = 0;
     }*/
 
-    private void createPlayer(){
+    private void createPlayer() {
         AudioFormat af = new AudioFormat(sampleRate, 16, 1, true, false);
         try {
             line = AudioSystem.getSourceDataLine(af);
             line.open(af);
             line.start();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        catch (Exception ex) { ex.printStackTrace(); }
     }
 
-    private Runnable play = new Runnable() { public void run() {
-        buffer = new byte[bufferSize];
-        int b=0;
-        int t=0;
-
-        while (playing) {
-            if (t >= tickBufferSize)
-                t = 0;
-
-            short maxSample = (short) ((tickBuffer[t++] * Short.MAX_VALUE));
-            buffer[b++] = (byte) (maxSample & 0x00ff);
-            buffer[b++] = (byte) ((maxSample & 0xff00) >>> 8);
-
-            if (b >= bufferSize) {
-                line.write(buffer, 0, buffer.length);
-                b=0;
-            }
-        }
-
-        destroyPlayer();
-    }};
-
-    private void destroyPlayer(){
+    private void destroyPlayer() {
         line.drain();
         line.close();
+    }
+
+    public void gracefullyTerminate() {
+        playing = false;
     }
 }

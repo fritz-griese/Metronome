@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 
 public class FxGUI implements ActionListener{
 
-    private static Player player;
+    private final PlayerController controller = new PlayerController();
 
     private JFrame mainFrame;
     private  JPanel mainContent;
@@ -15,15 +15,10 @@ public class FxGUI implements ActionListener{
     private  JButton buttonPlay;
 
     public static void main (String[] args) {
-        player = new Player();
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new FxGUI().guiCreateAndShow();
-            }
-        });
+        SwingUtilities.invokeLater(() -> new FxGUI().createAndShowGUI());
     }
 
-    public void guiCreateAndShow() {
+    public void createAndShowGUI() {
         guiFrameAndContentPanel();
         guiAddContent();
     }
@@ -55,6 +50,6 @@ public class FxGUI implements ActionListener{
     }
 
     public void actionPerformed(ActionEvent e) {
-        player.play();
+            controller.play();
     }
 }
