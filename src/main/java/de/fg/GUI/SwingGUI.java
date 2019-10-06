@@ -1,6 +1,6 @@
 package de.fg.GUI;
 
-import de.fg.Metronome.PlayerController;
+import de.fg.Metronome.deprecated.PlayerController;
 
 import javax.swing.*;
 import java.awt.*;

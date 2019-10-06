@@ -1,3 +1,4 @@
 # IDEA Files
 .idea/*
 Metronome.iml
+**/target/*

@@ -1,4 +1,4 @@
-package de.fg.Metronome;
+package de.fg.Metronome.deprecated;
 
 /**
  * Controls the Audio-Thread.

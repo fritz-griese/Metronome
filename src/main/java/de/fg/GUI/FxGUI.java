@@ -1,11 +1,12 @@
-package de.fg;
+package de.fg.GUI;
 
+import de.fg.Metronome.Player;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class FxGUI implements ActionListener{
+public class FxGUI implements ActionListener {
 
     private static Player player;
 
